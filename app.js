@@ -15,14 +15,15 @@ canvas.height = HEIGHT;
 
 // Canvas Axis and Origin Point
 
-ctx.translate(WIDTH / 2, HEIGHT / 2)
+ctx.translate(WIDTH / 4, HEIGHT / 2)
 ctx.scale(1, -1);
 ctx.fillStyle = 'white'
 
 const axisLineWidth = 1;
 
 ctx.fillRect(0, -HEIGHT / 2, axisLineWidth, HEIGHT)
-ctx.fillRect(-WIDTH / 2, 0, WIDTH, axisLineWidth)
+ctx.fillRect(-WIDTH / 4, 0, WIDTH, axisLineWidth)
+
 ctx.stroke()
 
 
@@ -30,54 +31,70 @@ ctx.stroke()
 
 // DFT
 
-
-
-const complex = (re, im) => {
+const complex = (re, im, freq) => {
     return {
         re,
         im,
-        multiply: (re2, im2) => {
-            return complex((re * re2 - im * im2), (re * im2 + im + re2) * -1);
+        freq,
+        normalize(n) {
+            return complex(this.re / n, this.im / n, this.freq);
+        },
+
+        magnitude(){
+            return Math.sqrt(this.re * this.re + this.im * this.im);
+        },
+
+        phase() {
+            return Math.atan2(this.im, this.re)
         }
     }
 }
-
-const maxn = 500;
 
 const signal = []
-for (let i = 0; i < maxn; ++i) {
-    signal.push(complex(i, Math.sin(i)))
+// const signal = [100, 100, 100, -100, -100, -100, 100, 100, 100, -100, -100, -100]
+const N = 128;
+const freq = 4;
+const freq2 = 5;
+const amp = 100;
+const duration = 1;
+const delta_t = duration / N;
+
+for (let i = 0; i < N ; i+=.1) {
+    signal.push(((amp * Math.sin(i * 2)) + (50 * Math.sin(i * 8))))
 }
 
-const dft = (signal) => {
-    // 1/N sum(0, N-1): Fn * e^-i2Pink/N
-    const N = signal.length;
-    const normalizer = 1 / N;
-    const fk = []
-    for (let k = 0; k < 10; ++k) {
+function dft(x) {
+    const X = []
+    const N = x.length;
+
+    for (let k = 0; k < N; ++k) {
+        const c = complex(0, 0, k);
+
         for (let n = 0; n < N; ++n) {
-            const c = signal[n];
-            const exp = (2 * Math.PI * n * k) / N;
-            const e = complex(Math.cos(exp), -Math.sin(exp));
-            const result = c.multiply(e.re, e.im);
-            fk.push(result);
+            const xn = x[n];
+            const exp = (2 * Math.PI * k * n) / N;
+            const e = complex(Math.cos(exp), Math.sin(exp));
+            c.re += xn * e.re;
+            c.im += -(xn * e.im);
         }
+
+        X.push(c.normalize(N));
     }
 
-    return fk
+    return X;
 }
 
 
 // Canvas Function drawer
 
-const squareSize = 1;
+const squareSize = 2;
 
-signal.forEach(c => {
-    // ctx.fillRect(c.re * squareSize, c.im * squareSize, squareSize, squareSize)
+signal.forEach((val, i) => {
+    ctx.fillRect(i * squareSize, val * squareSize, squareSize, squareSize)
 })
 
-const values = dft(signal);
+const values = dft(signal)
 
-values.forEach(c => {
-    ctx.fillRect(c.re * squareSize, c.im * squareSize, squareSize, squareSize)
+values.forEach((c, i) => {
+    ctx.fillRect(i * squareSize, 0 * squareSize, squareSize, squareSize * c.magnitude())
 })
