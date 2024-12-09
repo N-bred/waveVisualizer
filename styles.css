@@ -8,9 +8,36 @@
 body {
     background: black;
     overflow: hidden;
+    font-family: 'Courier New', Courier, monospace
 }
 
 canvas {
     --scaling: 2;
     scale: var(--scaling);
+}
+
+.gui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
+
+.gui > *:not(label) {
+    margin: 10px 10px 5px;
+    width: 100%;
+    padding: .5rem 1rem;
+}
+
+label {
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    padding: 1rem;
+}
+
+#detail {
+    direction: rtl;
 }

@@ -21,8 +21,7 @@ ctx.fillStyle = 'white'
 
 const axisLineWidth = 1;
 
-ctx.fillRect(0, -HEIGHT / 2, axisLineWidth, HEIGHT)
-ctx.fillRect(-WIDTH / 4, 0, WIDTH, axisLineWidth)
+
 
 ctx.stroke()
 
@@ -40,7 +39,7 @@ const complex = (re, im, freq) => {
             return complex(this.re / n, this.im / n, this.freq);
         },
 
-        magnitude(){
+        magnitude() {
             return Math.sqrt(this.re * this.re + this.im * this.im);
         },
 
@@ -50,17 +49,22 @@ const complex = (re, im, freq) => {
     }
 }
 
-const signal = []
-// const signal = [100, 100, 100, -100, -100, -100, 100, 100, 100, -100, -100, -100]
-const N = 128;
-const freq = 4;
-const freq2 = 5;
-const amp = 100;
-const duration = 1;
-const delta_t = duration / N;
+let signal = []
 
-for (let i = 0; i < N ; i+=.1) {
-    signal.push(((amp * Math.sin(i * 2)) + (50 * Math.sin(i * 8))))
+const props = {
+    N: 128,
+    freq: 4,
+    freq2: 8,
+    amp: 100,
+    amp2: 50,
+    detail: 0.1,
+    squareSize: 1,
+}
+
+const createArray = () => {
+    for (let i = 0; i < props.N; i += props.detail) {
+        signal.push(((props.amp * Math.sin(i * props.freq)) + (props.amp2 * Math.sin(i * props.freq2))))
+    }
 }
 
 function dft(x) {
@@ -86,15 +90,31 @@ function dft(x) {
 
 
 // Canvas Function drawer
+let values = dft(signal)
+let frameRequest = null;
 
-const squareSize = 2;
+const animate = (i) => {
+    ctx.clearRect(-WIDTH / 2, -HEIGHT / 2, WIDTH * 2, HEIGHT * 2);
+    ctx.fillRect(0, -HEIGHT / 2, axisLineWidth, HEIGHT)
+    ctx.fillRect(0, 0, WIDTH, axisLineWidth)
 
-signal.forEach((val, i) => {
-    ctx.fillRect(i * squareSize, val * squareSize, squareSize, squareSize)
-})
+    signal.forEach((val, i) => {
+        ctx.fillRect(i * props.squareSize, val * props.squareSize, props.squareSize, props.squareSize)
+    })
 
-const values = dft(signal)
+    values.forEach((c, i) => {
+        ctx.fillRect(i * props.squareSize, 0 * props.squareSize, props.squareSize, props.squareSize * c.magnitude())
+    })
 
-values.forEach((c, i) => {
-    ctx.fillRect(i * squareSize, 0 * squareSize, squareSize, squareSize * c.magnitude())
-})
+    frameRequest = requestAnimationFrame(animate)
+}
+
+const rebuild = () => {
+    signal = [];
+    createArray();
+    values = dft(signal);
+}
+
+rebuild()
+animate()
+
