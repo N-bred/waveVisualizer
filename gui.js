@@ -7,6 +7,10 @@ const amp1el = document.getElementById('amp1')
 const amp2el = document.getElementById('amp2')
 const detailel = document.getElementById('detail')
 const squareSizeel = document.getElementById('squareSize')
+const timerel = document.getElementById('timer')
+const animationAmplitudeel = document.getElementById('animationAmplitude')
+const showingDFTel = document.getElementById('showingDft')
+const showingAnimationel = document.getElementById('showingAnimation')
 
 N1el.value = props.N
 freq1el.value = props.freq
@@ -15,6 +19,10 @@ amp1el.value = props.amp
 amp2el.value = props.amp2
 detailel.value = props.detail
 squareSizeel.value = props.squareSize
+timerel.value = props.timer
+animationAmplitudeel.value = props.animationAmplitude
+showingDFTel.checked = props.showingDft
+showingAnimationel.checked = props.showingAnimation
 
 N1el.addEventListener('mousemove', e => {
     const val = parseFloat(e.target.value);
@@ -95,6 +103,42 @@ squareSizeel.addEventListener('mousemove', e => {
 squareSizeel.addEventListener('change', e => {
     const val = parseFloat(e.target.value);
     props.squareSize = val;
+    rebuild()
+})
+
+timerel.addEventListener('mousemove', e => {
+    const val = parseFloat(e.target.value);
+    props.timer = val;
+    rebuild()
+})
+
+timerel.addEventListener('change', e => {
+    const val = parseFloat(e.target.value);
+    props.timer = val;
+    rebuild()
+})
+
+animationAmplitudeel.addEventListener('mousemove', e => {
+    const val = parseFloat(e.target.value);
+    props.animationAmplitude = val;
+    rebuild()
+})
+
+animationAmplitudeel.addEventListener('change', e => {
+    const val = parseFloat(e.target.value);
+    props.animationAmplitude = val;
+    rebuild()
+})
+
+showingDFTel.addEventListener('change', e => {
+    const val = e.target.checked;
+    props.showingDft = val;
+    rebuild()
+})
+
+showingAnimationel.addEventListener('change', e => {
+    const val = e.target.checked;
+    props.showingAnimation = val;
     rebuild()
 })
 
