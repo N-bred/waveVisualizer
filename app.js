@@ -8,12 +8,22 @@ const axisLineWidth = 1;
 let WIDTH = null;
 let HEIGHT = null;
 
+
+
 const buildWindow = () => {
     WIDTH = window.innerWidth;
     HEIGHT = window.innerHeight;
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
-    ctx.translate(WIDTH / 4, HEIGHT / 2)
+    let factor = null;
+    if (window.innerWidth < 600) {
+        factor = 2
+    } else if (window.innerWidth < 900) {
+        factor = 3
+    } else {
+        factor = 4
+    }
+    ctx.translate(WIDTH / factor, HEIGHT / 2)
     ctx.scale(1, -1);
     ctx.fillStyle = 'white'
     ctx.stroke()

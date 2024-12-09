@@ -23,6 +23,16 @@ canvas {
     display: flex;
     flex-direction: column;
     width: 300px;
+  
+}
+
+@media screen and (max-height: 700px) {
+    .gui {
+        max-height: 600px;
+        overflow-y: scroll;
+        padding-right: 30px;
+        overflow-x: hidden;
+    }
 }
 
 .gui > *:not(label) {
